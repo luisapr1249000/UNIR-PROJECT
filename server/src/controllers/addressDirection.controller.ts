@@ -1,8 +1,5 @@
 import { Request, Response } from "express";
-import {
-  addressDirectionInputSchema,
-  addressDirectionSchema,
-} from "../validation-schemas/user.validation";
+
 import { getError, handleObjectNotFound } from "../utils/error.utils";
 import { extractAuthUserId } from "../utils/auth.utils";
 import { User } from "../models/user.model";
@@ -11,6 +8,7 @@ import {
   addressDirectionIdParamSchema,
   userIdParamSchema,
 } from "../validation-schemas/query.validation";
+import { addressDirectionInputSchema } from "../validation-schemas/addressDirection.validation";
 
 class AddressDirectionController {
   public async createAddressDirection(req: Request, res: Response) {
@@ -86,7 +84,7 @@ class AddressDirectionController {
 
       const options = {
         ...req.query,
-        populate: ["author", "post"],
+        populate: ["user"],
       };
 
       const query = {
@@ -94,13 +92,13 @@ class AddressDirectionController {
         user: userId,
       };
 
-      const comments = await AddressDirection.paginate(query, options);
-      const { docs } = comments;
+      const address = await AddressDirection.paginate(query, options);
+      const { docs } = address;
       if (docs.length <= 0) {
         return handleObjectNotFound(res, "Address", true);
       }
 
-      return res.status(200).json(comments);
+      return res.status(200).json(address);
     } catch (e) {
       const { status, error } = getError(e);
       return res.status(status).json(error);

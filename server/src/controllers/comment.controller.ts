@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { extractAuthUserId } from "../utils/auth.utils";
 import { getError, handleObjectNotFound } from "../utils/error.utils";
-import { commentInputSchema } from "../validation-schemas/product.validation";
 import {
   commentIdParamSchema,
   paginationNoPopulateSchema,
@@ -10,6 +9,7 @@ import {
 } from "../validation-schemas/query.validation";
 import { Product } from "../models/product.model";
 import { Comment } from "../models/comment.model";
+import { commentInputSchema } from "../validation-schemas/comment.validation";
 
 class CommentController {
   public async createComment(req: Request, res: Response) {
@@ -47,11 +47,15 @@ class CommentController {
         return handleObjectNotFound(res, "Product", true);
       }
 
-      const comment = await Comment.findOneAndUpdate({
-        _id: commentId,
-        author: authUserId,
-        product: productId,
-      });
+      const comment = await Comment.findOneAndUpdate(
+        {
+          _id: commentId,
+          author: authUserId,
+          product: productId,
+        },
+        req.body,
+        { new: true },
+      );
       if (!comment) {
         return handleObjectNotFound(res, "Comment");
       }
@@ -82,7 +86,7 @@ class CommentController {
         return handleObjectNotFound(res, "Comment");
       }
 
-      return res.status(204).json(comment);
+      return res.status(204);
     } catch (e) {
       const { status, error } = getError(e);
       return res.status(status).json(error);
@@ -95,7 +99,7 @@ class CommentController {
 
       const options = {
         ...req.query,
-        populate: ["author", "post"],
+        populate: ["author", "product"],
       };
 
       const query = {
@@ -122,12 +126,12 @@ class CommentController {
 
       const options = {
         ...req.query,
-        populate: ["author", "post"],
+        populate: ["author"],
       };
 
       const query = {
         isDeleted: false,
-        post: productId,
+        product: productId,
       };
 
       const comments = await Comment.paginate(query, options);
@@ -150,7 +154,7 @@ class CommentController {
 
       const options = {
         ...req.query,
-        populate: ["author", "post"],
+        populate: ["author", "product"],
       };
 
       const query = {

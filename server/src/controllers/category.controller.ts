@@ -26,8 +26,9 @@ class CategoryController {
       const { categoryId } = req.params;
 
       const category = await Category.findOneAndUpdate(
-        { _id: categoryId },
+        { _id: categoryId, author: authUserId },
         req.body,
+        { new: true },
       );
       if (!category) {
         return handleObjectNotFound(res, "Category");
@@ -50,7 +51,7 @@ class CategoryController {
       if (!category) {
         return handleObjectNotFound(res, "Category");
       }
-      return res.status(201).json(category);
+      return res.status(204);
     } catch (e) {
       const { status, error } = getError(e);
       return res.status(status).json(error);
@@ -67,7 +68,7 @@ class CategoryController {
       );
       const { docs } = categories;
       if (docs.length <= 0) {
-        return handleObjectNotFound(res, "User", true);
+        return handleObjectNotFound(res, "Categories");
       }
       return res.status(200).json(categories);
     } catch (e) {

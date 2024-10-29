@@ -15,6 +15,14 @@ export const usernameParamSchema = z.object({
   username: z.string().min(1),
 });
 
+export const orderIdParamSchema = z.object({
+  orderId: z.string().min(1),
+});
+
+export const orderItemIdParamSchema = z.object({
+  orderItemId: z.string().min(1),
+});
+
 export const addressDirectionIdParamSchema = z.object({
   addressDirectionId: z.string().min(1),
 });

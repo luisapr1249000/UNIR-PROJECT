@@ -2,16 +2,18 @@ import { Request, Response } from "express";
 import { extractAuthUserId } from "../utils/auth.utils";
 import { Order } from "../models/orders.model";
 import { getError, handleObjectNotFound } from "../utils/error.utils";
+import { orderInputSchema } from "../validation-schemas/order.validation";
+import { orderIdParamSchema } from "../validation-schemas/query.validation";
 
 class OrderController {
   public async createOrder(req: Request, res: Response) {
     try {
       const authUserId = extractAuthUserId(req);
-      const { totalPrice, orderItems, items } = req.body;
+      const { totalPrice, orderItems } = orderInputSchema.parse(req.body);
       const order = new Order({
         customerId: authUserId,
         totalPrice,
-        orderItems: items,
+        orderItems: orderItems,
       });
       await order.save();
       return res.status(201).json(order);
@@ -23,7 +25,7 @@ class OrderController {
 
   public async updateOrderStatus(req: Request, res: Response) {
     try {
-      const { orderId } = req.params;
+      const { orderId } = orderIdParamSchema.parse(req.params);
       const orderUpdated = await Order.findOneAndUpdate(
         {
           _id: orderId,
@@ -43,7 +45,7 @@ class OrderController {
   public async deleteOrder(req: Request, res: Response) {
     try {
       const authUserId = extractAuthUserId(req);
-      const { orderId } = req.params;
+      const { orderId } = orderIdParamSchema.parse(req.params);
       const orderDeleted = await Order.findOneAndDelete({
         _id: orderId,
         author: authUserId,

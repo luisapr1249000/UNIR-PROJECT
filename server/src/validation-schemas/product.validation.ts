@@ -1,22 +1,11 @@
 import { z } from "zod";
+import { abstractSchema, authorObjIdSchema } from "./abstract.validation";
 
 export const imageSchema = z.object({
   originalName: z.string(),
   url: z.string().url("Invalid image URL"),
   contentType: z.string(),
   size: z.number().nonnegative("Size must be a non-negative number"),
-});
-
-export const commentInputSchema = z.object({
-  content: z.string().min(1),
-  review: z.coerce.number().nonnegative().optional().default(1),
-  image: z.array(imageSchema).optional().default([]),
-});
-
-export const commentSchema = commentInputSchema.extend({
-  author: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
 });
 
 export const specificationsSchema = z.object({
@@ -48,8 +37,6 @@ export const productInputSchema = z.object({
   specifications: specificationsSchema.optional(),
 });
 
-export const productSchema = productInputSchema.extend({
-  author: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
+export const productSchema = abstractSchema
+  .merge(productInputSchema)
+  .merge(authorObjIdSchema);

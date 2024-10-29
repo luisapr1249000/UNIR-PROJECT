@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { abstracSchema } from "./user.validation";
+import { abstractSchema, authorObjIdSchema } from "./abstract.validation";
 
 export const categoryInputSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
 });
 
-export const categorySchema = abstracSchema.extend({
-  author: z.string(),
-});
+export const categorySchema = abstractSchema
+  .merge(categoryInputSchema)
+  .merge(authorObjIdSchema);

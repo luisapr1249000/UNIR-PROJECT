@@ -107,7 +107,7 @@ class UserController {
   public async getUseSavedProducts(req: Request, res: Response) {
     try {
       const { userId } = userIdParamSchema.parse(req.params);
-      const user = await User.findById(userId).select("produtsSaved");
+      const user = await User.findById(userId).select("savedProducts");
       if (!user) {
         return handleObjectNotFound(res, "User");
       }

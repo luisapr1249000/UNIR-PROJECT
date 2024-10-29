@@ -30,7 +30,10 @@ class AuthController {
         return res.status(400).json({ message: "Something went bad." });
       }
 
-      const payload = createPayload(userSaved._id, userSaved.username);
+      const payload = createPayload(
+        userSaved._id.toString(),
+        userSaved.username,
+      );
 
       const accessToken = genAccessToken(payload);
       const refreshToken = genRefreshToken(payload);
@@ -58,7 +61,7 @@ class AuthController {
       if (!passwordIsValid) {
         return res.status(404).json({ message: "Invalid credentials" });
       }
-      const payload = createPayload(user._id, user.username);
+      const payload = createPayload(user._id.toString(), user.username);
 
       const accessToken = genAccessToken(payload);
       const refreshToken = genRefreshToken(payload);

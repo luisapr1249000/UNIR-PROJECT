@@ -2,19 +2,25 @@ import { Request, Response } from "express";
 import { extractAuthUserId } from "../utils/auth.utils";
 import { getError, handleObjectNotFound } from "../utils/error.utils";
 import { Order } from "../models/orders.model";
+import {
+  orderIdParamSchema,
+  orderItemIdParamSchema,
+} from "../validation-schemas/query.validation";
+import { orderItemInputSchema } from "../validation-schemas/orderItem.validation";
 
 class OrderItem {
   public async updateOrderItem(req: Request, res: Response) {
     try {
-      const { orderId, itemId } = req.params;
-      const { quantity, price } = req.body;
+      const { orderId } = orderIdParamSchema.parse(req.params);
+      const { orderItemId } = orderItemIdParamSchema.parse(req.params);
+      const { quantity, price } = orderItemInputSchema.parse(req.body);
 
       const order = await Order.findById(orderId);
       if (!order) {
         return handleObjectNotFound(res, "Order");
       }
 
-      const itemToUpdate = order.orderItems.id(itemId);
+      const itemToUpdate = order.orderItems.id(orderItemId);
       if (!itemToUpdate) {
         return handleObjectNotFound(res, "Order");
       }
@@ -32,14 +38,15 @@ class OrderItem {
 
   public async deleteOrderItem(req: Request, res: Response) {
     try {
-      const { orderId, itemId } = req.params;
+      const { orderId } = orderIdParamSchema.parse(req.params);
+      const { orderItemId } = orderItemIdParamSchema.parse(req.params);
 
       const order = await Order.findById(orderId);
       if (!order) {
         return handleObjectNotFound(res, "Order");
       }
 
-      const itemToDelete = order.orderItems.id(itemId);
+      const itemToDelete = order.orderItems.id(orderItemId);
       if (!itemToDelete) {
         return handleObjectNotFound(res, "Order");
       }
