@@ -10,7 +10,7 @@ export const setTokenCookie = (
   res: Response,
   cookieName: string,
   token: string,
-  maxAge: number | null = DEFAULT_COOKIES_DAY
+  maxAge: number | null = DEFAULT_COOKIES_DAY,
 ) => {
   const opts = {
     httpOnly: true,
@@ -19,8 +19,6 @@ export const setTokenCookie = (
     path: "/",
     sameSite: "strict",
   } as CookieOptions;
-
-  // console.log(opts);
 
   res.cookie(cookieName, token, opts);
 };
@@ -57,11 +55,11 @@ export const checkRefreshTokenAndGenAccessToken = (refreshToken: string) => {
     const payload = { username, sub } as UserJwt;
     return genAccessToken(payload);
   } catch (_error) {
-    return null; // Return null for invalid tokens
+    return null;
   }
 };
 
 export const extractAuthUserId = (req: Request): string => {
   const userId = req.user ? (req.user as { _id: string })._id : "";
-  return userId ? userId.toString() : ""; // Ensure a valid string is returned
+  return userId ? userId.toString() : "";
 };

@@ -35,7 +35,6 @@ app.use("/api/v1", CategoryRoutes);
 app.use("/api/v1", ProductRoutes);
 app.use("/api/v1", CommentRoutes);
 
-// Health Check Endpoint
 app.get("/api/v1/health", (_req, res) => {
   res.status(200).json({ status: "OK" });
 });

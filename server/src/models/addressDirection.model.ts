@@ -4,6 +4,11 @@ import { AddressDirectionDocument } from "../types/addressDirectionSchema";
 
 export const addressDirectionSchema = new Schema(
   {
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     pinCode: {
       type: String,
       required: true,
@@ -25,7 +30,7 @@ export const addressDirectionSchema = new Schema(
     },
     addressLine2: {
       type: String,
-      trim: true, // Optional field
+      trim: true,
       maxlength: 100,
     },
     cityDistrictTown: {
@@ -39,12 +44,12 @@ export const addressDirectionSchema = new Schema(
     },
     alternatePhone: {
       type: String,
-      trim: true, // Optional field
+      trim: true,
     },
     addressType: {
       type: String,
       required: true,
-      enum: ["home", "work"], // Define acceptable types
+      enum: ["home", "work"],
     },
   },
   { timestamps: true },

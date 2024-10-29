@@ -77,5 +77,3 @@ export const User = model<UserDocument, PaginateModel<UserDocument>>(
   "User",
   userSchema,
 );
-
-// export const User = model("Users", userSchema);

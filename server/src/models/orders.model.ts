@@ -1,22 +1,5 @@
-import { Types } from "mongoose";
 import { Schema, model } from "mongoose";
-
-const orderItemSchema = new Schema({
-  product: {
-    type: Schema.Types.ObjectId,
-    ref: "Product",
-  },
-  quantity: {
-    type: Number,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-});
-
-export const OrderItem = model("Order Item", orderItemSchema);
+import { orderItemSchema } from "./orderItem.model";
 
 const orderSchema = new Schema({
   orderDate: {
@@ -25,7 +8,7 @@ const orderSchema = new Schema({
   },
   customerId: {
     type: Schema.Types.ObjectId,
-    ref: "Customer", // Assuming you have a Customer model
+    ref: "User",
   },
   totalPrice: {
     type: Number,
@@ -36,12 +19,7 @@ const orderSchema = new Schema({
     enum: ["pending", "processing", "shipped", "delivered"],
     default: "pending",
   },
-  orderItems: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "OrderItem",
-    },
-  ],
+  orderItems: [orderItemSchema],
 });
 
 export const Order = model("Order", orderSchema);

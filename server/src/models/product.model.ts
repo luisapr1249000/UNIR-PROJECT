@@ -21,12 +21,12 @@ export const productSchema = new Schema(
     price: {
       type: Number,
       required: true,
-      min: 0, // Ensure price is non-negative
+      min: 0,
     },
     quantity: {
       type: Number,
       required: true,
-      min: 0, // Ensure quantity is non-negative
+      min: 0,
     },
     categories: [
       {
@@ -50,13 +50,7 @@ export const productSchema = new Schema(
       weightCapacity: Number,
     },
     brand: [String],
-    images: [
-      {
-        type: imageSchema, // Store image URLs
-        required: true,
-        default: [],
-      },
-    ],
+    images: [imageSchema],
   },
   {
     toJSON: { virtuals: true },

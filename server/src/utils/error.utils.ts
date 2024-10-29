@@ -9,7 +9,7 @@ export const getError = (e: unknown) => {
 };
 export const handleObjectNotFound = (
   res: Response,
-  objectType: "User" | "Product" | "Comment" | "Category" | "Address",
+  objectType: "User" | "Product" | "Comment" | "Category" | "Address" | "Order",
   multipleObjects = false,
   extraMessage = "",
 ) => {

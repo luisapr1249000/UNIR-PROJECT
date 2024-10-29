@@ -25,7 +25,7 @@ class ProductController {
 
   public async updateProduct(req: Request, res: Response) {
     try {
-      const { productId } = productIdParamSchema.parse(req.params); // For delete and get by id
+      const { productId } = productIdParamSchema.parse(req.params);
       const authUserId = extractAuthUserId(req);
       productInputSchema.parse(req.body);
       const product = await Product.findOneAndUpdate(
@@ -90,7 +90,7 @@ class ProductController {
 
   public async getProductById(req: Request, res: Response) {
     try {
-      const { productId } = productIdParamSchema.parse(req.params); // For delete and get by id
+      const { productId } = productIdParamSchema.parse(req.params);
       const product = await Product.findById(productId)
         .populate("author")
         .populate("categories");

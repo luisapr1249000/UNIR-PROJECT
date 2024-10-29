@@ -45,7 +45,7 @@ class AuthController {
   }
   public async login(req: Request, res: Response) {
     try {
-      const { rememberMe, loginValue, password } = loginSchema.parse(req.body); // Type assertion
+      const { rememberMe, loginValue, password } = loginSchema.parse(req.body);
       const user = await User.findOne({
         $or: [{ email: loginValue }, { username: loginValue }],
       });
@@ -56,7 +56,7 @@ class AuthController {
 
       const passwordIsValid = user.comparePasswords(password);
       if (!passwordIsValid) {
-        return res.status(404).json({ message: "Invalid credentials" }); // More specific error
+        return res.status(404).json({ message: "Invalid credentials" });
       }
       const payload = createPayload(user._id, user.username);
 

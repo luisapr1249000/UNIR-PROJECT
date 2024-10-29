@@ -10,7 +10,7 @@ const connectDB = async () => {
   const DB_URI =
     process.env.NODE_ENV === "prod"
       ? process.env.MONGO_URI_PROD
-      : process.env.MONGO_URI_DEV; // Fixed the variable names for clarity
+      : process.env.MONGO_URI_DEV;
   const PORT = process.env.PORT || 8000;
 
   try {
@@ -21,7 +21,7 @@ const connectDB = async () => {
     });
   } catch (e) {
     console.error("Database connection error:", e);
-    process.exit(1); // Exit the process with failure
+    process.exit(1);
   }
 };
 connectDB();

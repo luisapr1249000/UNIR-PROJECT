@@ -30,8 +30,7 @@ class UserController {
   }
 
   public async getUserById(req: Request, res: Response) {
-    const { userId } = userIdParamSchema.parse(req.params); // Extract user ID from route parameters
-
+    const { userId } = userIdParamSchema.parse(req.params);
     try {
       const user = await User.findById(userId).select(
         "-cart -savedProducts -wishlist",
@@ -63,9 +62,9 @@ class UserController {
   }
 
   public async getUserByUsername(req: Request, res: Response) {
-    const { username } = usernameParamSchema.parse(req.params); // Extract username from route parameters
+    const { username } = usernameParamSchema.parse(req.params);
     try {
-      const user = await User.findOne({ username: username }); // Find user by username
+      const user = await User.findOne({ username: username });
       if (!user) {
         return handleObjectNotFound(res, "User");
       }
@@ -78,7 +77,7 @@ class UserController {
 
   public async deleteUser(req: Request, res: Response) {
     try {
-      const { userId } = userIdParamSchema.parse(req.params); // Extract user ID from route parameters
+      const { userId } = userIdParamSchema.parse(req.params);
       const userDeleted = await User.findByIdAndDelete(userId);
       if (!userDeleted) {
         return handleObjectNotFound(res, "User");
