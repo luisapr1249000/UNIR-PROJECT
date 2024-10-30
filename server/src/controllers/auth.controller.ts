@@ -59,7 +59,7 @@ class AuthController {
 
       const passwordIsValid = user.comparePasswords(password);
       if (!passwordIsValid) {
-        return res.status(404).json({ message: "Invalid credentials" });
+        return res.status(400).json({ message: "Invalid credentials" });
       }
       const payload = createPayload(user._id.toString(), user.username);
 

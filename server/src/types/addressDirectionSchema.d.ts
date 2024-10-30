@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { addressDirectionSchema } from "../models/addressDirection.model";
 import { Document } from "mongoose";
+import { addressDirectionSchema } from "../validation-schemas/addressDirection.validation";
 
 export type AddressDirection = z.infer<typeof addressDirectionSchema>;
 export type AddressDirectionDocument = Document & AddressDirection;

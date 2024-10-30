@@ -2,8 +2,8 @@ import { z } from "zod";
 import {
   productInputSchema,
   commentSchema,
+  productSchema,
 } from "../validation-schemas/product.validation";
-import { productSchema } from "../models/product.model";
 import { Document } from "mongoose";
 
 export type ProductInput = z.infer<typeof productInputSchema>;

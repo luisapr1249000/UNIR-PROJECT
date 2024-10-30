@@ -23,14 +23,15 @@ class OrderController {
     }
   }
 
-  public async updateOrderStatus(req: Request, res: Response) {
+  public async updateOrder(req: Request, res: Response) {
     try {
       const { orderId } = orderIdParamSchema.parse(req.params);
+      orderInputSchema.parse(req.body);
       const orderUpdated = await Order.findOneAndUpdate(
         {
           _id: orderId,
         },
-        { status: req.body },
+        req.body,
         { new: true },
       );
       if (!orderUpdated) {
