@@ -27,6 +27,10 @@ export const addressDirectionIdParamSchema = z.object({
   addressDirectionId: z.string().min(1),
 });
 
+export const categoryIdParamSchema = z.object({
+  categoryId: z.string().min(1),
+});
+
 export const paginationCoerceSchema = z.object({
   page: z.coerce.number().optional(),
   limit: z.coerce.number().optional().default(10),

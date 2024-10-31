@@ -4,6 +4,7 @@ import { getError, handleObjectNotFound } from "../utils/error.utils";
 import { productInputSchema } from "../validation-schemas/product.validation";
 import { Product } from "../models/product.model";
 import {
+  categoryIdParamSchema,
   paginationNoPopulateSchema,
   productIdParamSchema,
   userIdParamSchema,
@@ -117,6 +118,32 @@ class ProductController {
         sort,
         page,
         populate: ["author", "categories"],
+      });
+      if (products.docs.length === 0) {
+        return handleObjectNotFound(res, "Product", true);
+      }
+
+      return res.status(200).json(products);
+    } catch (e) {
+      const { status, error } = getError(e);
+      return res.status(status).json(error);
+    }
+  }
+  public async getProductsByCategoryWithPagination(
+    req: Request,
+    res: Response,
+  ) {
+    try {
+      const { limit, sort, page } = paginationNoPopulateSchema.parse(req.query);
+      const { categoryId } = categoryIdParamSchema.parse(req.params);
+      const query = {
+        categories: categoryId,
+      };
+      const products = await Product.paginate(query, {
+        limit,
+        sort,
+        page,
+        populate: ["author"],
       });
       if (products.docs.length === 0) {
         return handleObjectNotFound(res, "Product", true);

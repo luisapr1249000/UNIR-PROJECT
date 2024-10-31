@@ -17,7 +17,6 @@ router.put(
   authMiddleware,
   checkValiObjectdId,
   checkUserOrAdmin,
-
   productController.updateProduct,
 );
 router.delete(
@@ -25,16 +24,17 @@ router.delete(
   authMiddleware,
   checkValiObjectdId,
   checkUserOrAdmin,
-
   productController.deleteProduct,
 );
 router.get(
   "/products/author/:userId",
   checkValiObjectdId,
-  checkUserOrAdmin,
-
   productController.getProductsByAuthorWithPagination,
 );
 router.get("/products/:productId", productController.getProductById);
+router.get(
+  "/products/category/:categoryId",
+  productController.getProductsByCategoryWithPagination,
+);
 
 export { router as ProductRoutes };

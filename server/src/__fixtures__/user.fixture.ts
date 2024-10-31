@@ -33,3 +33,12 @@ export const createUserData = () => {
     password: "12345678",
   };
 };
+
+export const getOrCreateUser = async () => {
+  let user = await User.findOne();
+  if (!user) {
+    const newUser = await createUserFixture();
+    user = newUser.user;
+  }
+  return user._id.toString();
+};

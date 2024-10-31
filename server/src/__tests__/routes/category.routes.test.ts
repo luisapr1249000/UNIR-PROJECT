@@ -179,9 +179,47 @@ describe("Category Routes", () => {
 
   describe(`DELETE ${categoryEndpoint}/:categoryId`, () => {
     let categoryIdToDelete = "";
+    let deleteCategoryEndpoint = "";
     beforeEach(async () => {
       const { _id } = await createCategoryFixture(userId);
       categoryIdToDelete = _id.toString();
+      deleteCategoryEndpoint = createEndpoint("categories", categoryIdToDelete);
+    });
+
+    it("should return 204 if user is admin", async () => {
+      const response = await request(app)
+        .delete(deleteCategoryEndpoint)
+        .set("Cookie", adminCookies);
+      expect(response.status).toBe(401);
+    });
+
+    it("should return 401 if not cookies", async () => {
+      const response = await request(app).delete(deleteCategoryEndpoint);
+
+      expect(response.status).toBe(400);
+    });
+
+    it("should return 401 if not user admin", async () => {
+      const response = await request(app)
+        .delete(deleteCategoryEndpoint)
+        .set("Cookie", userCookies);
+      expect(response.status).toBe(400);
+    });
+
+    it("should return 404 if the category does not exist", async () => {
+      const response = await request(app)
+        .delete(categoryNonexistedIdEndpoint)
+        .set("Cookie", adminCookies);
+
+      expect(response.status).toBe(404);
+    });
+
+    it("should return 400 if not valid id", async () => {
+      const response = await request(app)
+        .put(categoryNoValidIdEndpoint)
+        .set("Cookie", adminCookies);
+
+      expect(response.status).toBe(400);
     });
   });
 });

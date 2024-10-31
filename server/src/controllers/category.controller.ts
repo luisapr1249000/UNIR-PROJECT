@@ -3,7 +3,10 @@ import { extractAuthUserId } from "../utils/auth.utils";
 import { getError, handleObjectNotFound } from "../utils/error.utils";
 import { categoryInputSchema } from "../validation-schemas/category.validation";
 import { Category } from "../models/category.model";
-import { paginationNoPopulateSchema } from "../validation-schemas/query.validation";
+import {
+  categoryIdParamSchema,
+  paginationNoPopulateSchema,
+} from "../validation-schemas/query.validation";
 
 class CategoryController {
   public async createCategory(req: Request, res: Response) {
@@ -22,7 +25,7 @@ class CategoryController {
   public async updateCategory(req: Request, res: Response) {
     try {
       categoryInputSchema.parse(req.body);
-      const { categoryId } = req.params;
+      const { categoryId } = categoryIdParamSchema.parse(req.params);
 
       const category = await Category.findOneAndUpdate(
         { _id: categoryId },
@@ -41,7 +44,7 @@ class CategoryController {
 
   public async deleteCategory(req: Request, res: Response) {
     try {
-      const { categoryId } = req.params;
+      const { categoryId } = categoryIdParamSchema.parse(req.params);
       const category = await Category.findOneAndDelete({
         _id: categoryId,
       });

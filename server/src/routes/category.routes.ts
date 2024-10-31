@@ -3,23 +3,29 @@ import categoryController from "../controllers/category.controller";
 import authMiddleware from "../middlewares/authMiddleware";
 import { checkValiObjectdId } from "../middlewares/checkObjectId";
 import { checkUserOrAdmin } from "../middlewares/checkUserOrAdmin";
+import { isAdmin } from "../middlewares/isAdmin";
 
 const router = Router();
 
 router.get("/categories", categoryController.getCategoriesWithPagination);
-router.post("/categories", authMiddleware, categoryController.createCategory);
+router.post(
+  "/categories",
+  isAdmin,
+  authMiddleware,
+  categoryController.createCategory,
+);
 router.put(
   "/categories/:categoryId",
   authMiddleware,
+  isAdmin,
   checkValiObjectdId,
-  checkUserOrAdmin,
   categoryController.updateCategory,
 );
 router.delete(
   "/categories/:categoryId",
   authMiddleware,
   checkValiObjectdId,
-  checkUserOrAdmin,
+  isAdmin,
   categoryController.deleteCategory,
 );
 
