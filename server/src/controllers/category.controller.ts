@@ -22,11 +22,10 @@ class CategoryController {
   public async updateCategory(req: Request, res: Response) {
     try {
       categoryInputSchema.parse(req.body);
-      const authUserId = extractAuthUserId(req);
       const { categoryId } = req.params;
 
       const category = await Category.findOneAndUpdate(
-        { _id: categoryId, author: authUserId },
+        { _id: categoryId },
         req.body,
         { new: true },
       );
@@ -42,11 +41,9 @@ class CategoryController {
 
   public async deleteCategory(req: Request, res: Response) {
     try {
-      const authUserId = extractAuthUserId(req);
       const { categoryId } = req.params;
       const category = await Category.findOneAndDelete({
         _id: categoryId,
-        author: authUserId,
       });
       if (!category) {
         return handleObjectNotFound(res, "Category");
