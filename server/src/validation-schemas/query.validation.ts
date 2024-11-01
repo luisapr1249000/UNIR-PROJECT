@@ -1,14 +1,15 @@
 import { z } from "zod";
+import { objectIdValidator } from "./abstract.validation";
 
 export const userIdParamSchema = z.object({
-  userId: z.string().min(1),
+  userId: objectIdValidator,
 });
 
 export const productIdParamSchema = z.object({
-  productId: z.string().min(1),
+  productId: objectIdValidator,
 });
 export const commentIdParamSchema = z.object({
-  commentId: z.string().min(1),
+  commentId: objectIdValidator,
 });
 
 export const usernameParamSchema = z.object({
@@ -16,19 +17,19 @@ export const usernameParamSchema = z.object({
 });
 
 export const orderIdParamSchema = z.object({
-  orderId: z.string().min(1),
+  orderId: objectIdValidator,
 });
 
 export const orderItemIdParamSchema = z.object({
-  orderItemId: z.string().min(1),
+  orderItemId: objectIdValidator,
 });
 
 export const addressDirectionIdParamSchema = z.object({
-  addressDirectionId: z.string().min(1),
+  addressDirectionId: objectIdValidator,
 });
 
 export const categoryIdParamSchema = z.object({
-  categoryId: z.string().min(1),
+  categoryId: objectIdValidator,
 });
 
 export const paginationCoerceSchema = z.object({

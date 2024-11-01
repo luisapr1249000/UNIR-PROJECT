@@ -30,7 +30,7 @@ export const checkValiObjectdId = (
   if (!categoryId && !Types.ObjectId.isValid(categoryId)) {
     return handleBadRequest(res);
   }
-  if (!AddressDirectionId && !Types.ObjectId.isValid(AddressDirectionId)) {
+  if (AddressDirectionId && !Types.ObjectId.isValid(AddressDirectionId)) {
     return handleBadRequest(res);
   }
   if (!orderId && !Types.ObjectId.isValid(orderId)) {

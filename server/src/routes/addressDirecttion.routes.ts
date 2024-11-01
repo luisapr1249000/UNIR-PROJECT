@@ -14,27 +14,25 @@ router.post(
 router.put(
   "/users/address-direction/:addressDirectionId",
   authMiddleware,
-  checkValiObjectdId,
   checkUserOrAdmin,
   addressDirectionController.updateAddressDirection,
 );
 router.delete(
   "/users/address-direction/:addressDirectionId",
   authMiddleware,
-  checkValiObjectdId,
   checkUserOrAdmin,
   addressDirectionController.deleteAddressDirection,
 );
 
-router.get(
-  "/users/:userId/address-directions",
-  checkValiObjectdId,
-  addressDirectionController.getUserAddressDirections,
-);
-router.get(
-  "/users/address-directions/:addressDirectionId",
-  checkValiObjectdId,
-  addressDirectionController.getAddressDirectionById,
-);
+// router.get(
+//   "/users/:userId/address-directions",
+//   checkValiObjectdId,
+//   addressDirectionController.getUserAddressDirections,
+// );
+// router.get(
+//   "/users/address-directions/:addressDirectionId",
+//   checkValiObjectdId,
+//   addressDirectionController.getAddressDirectionById,
+// );
 
 export { router as AddressDirectionRoutes };

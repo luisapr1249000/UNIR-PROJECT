@@ -1,9 +1,7 @@
-import { faker } from "@faker-js/faker/.";
-import { AddressDirection } from "../models/addressDirection.model";
+import { faker } from "@faker-js/faker";
 
-export const createAddressFixture = async (userId: string) => {
-  const address = new AddressDirection({
-    user: userId,
+export const createAddressFixture = async () => {
+  const address = {
     pinCode: faker.location.zipCode(),
     locality: faker.location.streetAddress(),
     addressLine1: faker.location.streetAddress(),
@@ -12,9 +10,8 @@ export const createAddressFixture = async (userId: string) => {
     state: faker.location.state(),
     alternatePhone: faker.phone.number(),
     addressType: faker.helpers.arrayElement(["home", "work"]),
-  });
+  };
 
-  await address.save();
   console.log("Address fixture created:", address);
 
   return address;

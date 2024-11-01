@@ -3,9 +3,15 @@ import app from "../../app";
 import { createUserFixture } from "../../__fixtures__/user.fixture";
 import { createEndpoint } from "../constants/constants";
 
-export const loginAndGetCookies = async (isAdmin = false) => {
+export const loginAndGetCookies = async (
+  isAdmin = false,
+  hasUserAddressDirection = false,
+) => {
   const endpoint = createEndpoint("auth", "login");
-  const { user, password } = await createUserFixture(isAdmin);
+  const { user, password } = await createUserFixture(
+    isAdmin,
+    hasUserAddressDirection,
+  );
 
   const response = await request(app)
     .post(endpoint)

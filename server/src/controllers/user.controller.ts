@@ -30,11 +30,9 @@ class UserController {
   }
 
   public async getUserById(req: Request, res: Response) {
-    const { userId } = userIdParamSchema.parse(req.params);
     try {
-      const user = await User.findById(userId).select(
-        "-cart -savedProducts -wishlist",
-      );
+      const { userId } = userIdParamSchema.parse(req.params);
+      const user = await User.findById(userId).select("-addressDirections");
       if (!user) {
         return handleObjectNotFound(res, "User");
       }
@@ -49,7 +47,10 @@ class UserController {
     try {
       const { limit, page, sort } = paginationNoPopulateSchema.parse(req.query);
 
-      const users = await User.paginate({}, { limit, page, sort });
+      const users = await User.paginate(
+        {},
+        { limit, page, sort, select: ["-addressDirections"] },
+      );
       const { docs } = users;
       if (docs.length <= 0) {
         return handleObjectNotFound(res, "User", true);

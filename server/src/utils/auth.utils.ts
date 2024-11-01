@@ -40,7 +40,7 @@ export const getKey = () => {
 };
 
 export const genAccessToken = (payload: UserJwt) => {
-  return jwt.sign(payload, getKey(), { expiresIn: "20m" });
+  return jwt.sign(payload, getKey(), { expiresIn: "15m" });
 };
 
 export const genRefreshToken = (payload: UserJwt) => {
@@ -62,4 +62,12 @@ export const checkRefreshTokenAndGenAccessToken = (refreshToken: string) => {
 export const extractAuthUserId = (req: Request): string => {
   const userId = req.user ? (req.user as { _id: string })._id : "";
   return userId ? userId.toString() : "";
+};
+
+export const getUserIdFromAuth = (req: Request) => {
+  const userId = req.user?._id?.toString();
+  if (!userId) {
+    throw new Error("Authenticated user ID is missing.");
+  }
+  return userId;
 };

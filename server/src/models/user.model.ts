@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { PaginateModel, Schema, model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 import { UserDocument } from "../types/user";
+import { addressDirectionSchema } from "./addressDirection.model";
 
 export const imageSchema = new Schema({
   originalName: String,
@@ -39,12 +40,34 @@ const userSchema = new Schema(
       default: Date.now(),
     },
     savedProducts: [
-      { type: Schema.Types.ObjectId, ref: "Product", default: [] },
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Product",
+        default: [],
+        select: false,
+      },
     ],
-    wishlist: [{ type: Schema.Types.ObjectId, ref: "Product", default: [] }],
-    cart: [{ type: Schema.Types.ObjectId, ref: "Product", default: [] }],
+    wishlist: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Product",
+        default: [],
+        select: false,
+      },
+    ],
+    cart: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Product",
+        default: [],
+        select: false,
+      },
+    ],
     isSeller: { type: Boolean, default: false },
     role: { type: String, enum: ["user", "admin"], default: "user" },
+    addressDirections: [
+      { type: addressDirectionSchema, default: [], select: false },
+    ],
   },
   {
     timestamps: true,

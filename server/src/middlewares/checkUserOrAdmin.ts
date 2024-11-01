@@ -52,10 +52,10 @@ export const checkUserOrAdmin = async (
       if (!isOwner) return handleNotPermissions(res);
     }
 
-    if (addressDirectionId) {
-      const isOwner = await checkAddressDirectionOwnerShip(authUserId ?? "");
-      if (!isOwner) return handleNotPermissions(res);
-    }
+    // if (addressDirectionId) {
+    //   const isOwner = await checkAddressDirectionOwnerShip(authUserId ?? "");
+    //   if (!isOwner) return handleNotPermissions(res);
+    // }
     if (categoryId) {
       const isOwner = await checkCategoryOwnerShip(authUserId ?? "");
       if (!isOwner) return handleNotPermissions(res);

@@ -1,8 +1,12 @@
 import { faker } from "@faker-js/faker";
 
 import { User } from "../models/user.model";
+import { createAddressFixture } from "./addressDirection.fixture";
 
-export const createUserFixture = async (isAdmin = false) => {
+export const createUserFixture = async (
+  isAdmin = false,
+  hasAddresDirection = false,
+) => {
   const authInfo = createUserData();
   const user = new User({
     ...authInfo,
@@ -21,6 +25,7 @@ export const createUserFixture = async (isAdmin = false) => {
     cart: [],
     isSeller: faker.datatype.boolean(),
     role: isAdmin ? "admin" : faker.helpers.arrayElement(["user", "admin"]),
+    addressDirections: hasAddresDirection ? createAddressFixture() : [],
   });
   await user.save();
   return { user, password: authInfo.password };

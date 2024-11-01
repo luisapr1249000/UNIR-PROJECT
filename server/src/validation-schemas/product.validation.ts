@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { abstractSchema, authorObjIdSchema } from "./abstract.validation";
+import { Types } from "mongoose";
 
 export const imageSchema = z.object({
   originalName: z.string(),
@@ -30,7 +31,7 @@ export const productInputSchema = z.object({
     .trim(),
 
   description: z.string().min(1, "Description is required"),
-  category: z.string().optional(),
+  category: z.array(z.instanceof(Types.ObjectId)),
   price: z.coerce.number().nonnegative("Price must be non-negative"),
   quantity: z.coerce.number().nonnegative("Quantity must be non-negative"),
   images: z.array(imageSchema).default([]), // Default to an empty array if no images are provided

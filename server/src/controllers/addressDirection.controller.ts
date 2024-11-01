@@ -20,13 +20,10 @@ class AddressDirectionController {
       if (!user) {
         return handleObjectNotFound(res, "User");
       }
+      user.addressDirections.push(req.body);
 
-      const addressDirection = new AddressDirection({
-        ...req.body,
-        user: authUserId,
-      });
-      await addressDirection.save();
-      return res.status(200).json(addressDirection);
+      await user.save();
+      return res.status(201).json(user);
     } catch (e) {
       const { status, error } = getError(e);
       return res.status(status).json(error);
@@ -41,8 +38,8 @@ class AddressDirectionController {
       const authUserId = extractAuthUserId(req);
 
       const addressDirectionUpdated = await User.findOneAndUpdate(
-        { _id: addressDirectionId, user: authUserId },
-        req.body,
+        { _id: authUserId, "addressDirections._id": addressDirectionId },
+        { $set: { "addressDirection.$": req.body } },
         { new: true },
       );
       if (!addressDirectionUpdated) {
@@ -60,68 +57,67 @@ class AddressDirectionController {
       const { addressDirectionId } = req.params;
       const authUserId = extractAuthUserId(req);
 
-      const addressDirectionDeleted = await User.findOneAndDelete({
-        _id: addressDirectionId,
-        user: authUserId,
-      });
-      if (!addressDirectionDeleted) {
+      const user = await User.findById(authUserId);
+      if (!user) {
         return handleObjectNotFound(res, "Address");
       }
 
-      return res.status(204).json(addressDirectionDeleted);
+      user.addressDirections.id(addressDirectionId)?.deleteOne();
+      await user.save();
+      return res.status(204).json(user);
     } catch (e) {
       const { status, error } = getError(e);
       return res.status(status).json(error);
     }
   }
 
-  public async getUserAddressDirections(req: Request, res: Response) {
-    try {
-      const { userId } = userIdParamSchema.parse(req.params);
-      const { addressDirectionId } = addressDirectionIdParamSchema.parse(
-        req.params,
-      );
+  // public async getUserAddressDirections(req: Request, res: Response) {
+  //   try {
+  //     const { userId } = userIdParamSchema.parse(req.params);
+  //     const { addressDirectionId } = addressDirectionIdParamSchema.parse(
+  //       req.params,
+  //     );
 
-      const options = {
-        ...req.query,
-        populate: ["user"],
-      };
+  //     const options = {
+  //       ...req.query,
+  //       populate: ["user"],
+  //     };
 
-      const query = {
-        _id: addressDirectionId,
-        user: userId,
-      };
+  //     const query = {
+  //       _id: addressDirectionId,
+  //       user: userId,
+  //     };
 
-      const address = await AddressDirection.paginate(query, options);
-      const { docs } = address;
-      if (docs.length <= 0) {
-        return handleObjectNotFound(res, "Address", true);
-      }
+  //     const address = await AddressDirection.paginate(query, options);
+  //     const { docs } = address;
+  //     if (docs.length <= 0) {
+  //       return handleObjectNotFound(res, "Address", true);
+  //     }
 
-      return res.status(200).json(address);
-    } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
-    }
-  }
+  //     return res.status(200).json(address);
+  //   } catch (e) {
+  //     const { status, error } = getError(e);
+  //     return res.status(status).json(error);
+  //   }
+  // }
 
-  public async getAddressDirectionById(req: Request, res: Response) {
-    try {
-      const { addressDirectionId } = addressDirectionIdParamSchema.parse(
-        req.params,
-      );
-      const address =
-        await AddressDirection.findById(addressDirectionId).populate("user");
-      if (!address) {
-        return handleObjectNotFound(res, "Address");
-      }
+  // public async getAddressDirectionById(req: Request, res: Response) {
+  //   try {
+  //     const { addressDirectionId } = addressDirectionIdParamSchema.parse(
+  //       req.params,
+  //     );
+  //     const address =
+  //       await AddressDirection.findById(addressDirectionId).populate("user");
+  //     if (!address) {
+  //       return handleObjectNotFound(res, "Address");
+  //     }
 
-      return res.status(200).json(address);
-    } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
-    }
-  }
+  //     return res.status(200).json(address);
+  //   } catch (e) {
+  //     const { status, error } = getError(e);
+  //     return res.status(status).json(error);
+  //   }
+  // }
 }
 
 export default new AddressDirectionController();

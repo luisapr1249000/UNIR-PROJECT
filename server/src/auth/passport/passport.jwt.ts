@@ -7,8 +7,8 @@ config();
 const key = process.env.ACCESS_TOKEN_SECRET as string;
 
 const cookieExtractor = (req: Request) => {
-  if (req && req.cookies) {
-    return req.cookies["refreshToken"] || null; // Regresa el token si está presente
+  if (req && req.cookies && req.cookies["refreshToken"]) {
+    return req.cookies["accessToken"] || null; // Regresa el token si está presente
   }
   return null;
 };

@@ -4,11 +4,6 @@ import { AddressDirectionDocument } from "../types/addressDirectionSchema";
 
 export const addressDirectionSchema = new Schema(
   {
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
     pinCode: {
       type: String,
       required: true,

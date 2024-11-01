@@ -6,7 +6,7 @@ import { checkUserOrAdmin } from "../middlewares/checkUserOrAdmin";
 
 const router = Router();
 
-router.get("/users/", authMiddleware, userController.getUsersWithPagination);
+router.get("/users/", userController.getUsersWithPagination);
 router.put("/users/", authMiddleware, userController.updateUser);
 router.delete(
   "/users/:userId",
@@ -15,7 +15,7 @@ router.delete(
   checkUserOrAdmin,
   userController.deleteUser,
 );
-router.get("/users/:userId", checkValiObjectdId, userController.getUserById);
+router.get("/users/:userId", userController.getUserById);
 router.get("/users/:username", userController.getUserByUsername);
 
 // -------------------------------- cart ------------------

@@ -2,9 +2,16 @@ import mongoose, { connect } from "mongoose";
 
 import { config } from "dotenv";
 import app from "./app";
+import { createUserFixture } from "./__fixtures__/user.fixture";
 
 config();
 mongoose.Promise = global.Promise;
+
+const userSeeder = async () => {
+  for (let index = 0; index < 50; index++) {
+    await createUserFixture();
+  }
+};
 
 const connectDB = async () => {
   const DB_URI =
