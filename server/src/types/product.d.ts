@@ -1,7 +1,6 @@
 import { z } from "zod";
 import {
   productInputSchema,
-  commentSchema,
   productSchema,
 } from "../validation-schemas/product.validation";
 import { Document } from "mongoose";

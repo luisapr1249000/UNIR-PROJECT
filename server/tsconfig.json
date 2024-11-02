@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    
     "target": "ES2016",
     "module": "commonjs",
     "rootDir": "./src", // Set rootDir to the source directory
@@ -9,9 +8,9 @@
     "skipLibCheck": true,
     "removeComments": true,
 
-    // Strict mode 
+    // Strict mode
     "strict": true,
-    "alwaysStrict":  true,
+    "alwaysStrict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
     "useUnknownInCatchVariables": true,
@@ -22,14 +21,11 @@
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
 
-    
     // Others (5)
     "noUncheckedIndexedAccess": true,
     "noFallthroughCasesInSwitch": true,
     "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true
-    
-
   },
   "include": ["src/**/*.ts"],
   "exclude": [

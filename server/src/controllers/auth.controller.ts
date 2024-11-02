@@ -61,7 +61,7 @@ class AuthController {
       const accessToken = genAccessToken(payload);
       const refreshToken = genRefreshToken(payload);
 
-      console.log(accessToken, "\n", refreshToken);
+      // console.log(accessToken, "\n", refreshToken);
 
       setTokenCookie(
         res,

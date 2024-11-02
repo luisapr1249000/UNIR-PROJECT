@@ -18,7 +18,7 @@ export const validateSchemaBody = (schema: Zod.Schema) => {
 
 export const validateObjectIdParams = (paramNames: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.params);
+    // console.log(req.params);
     for (const paramName of paramNames) {
       const paramValue = req.params[paramName];
 

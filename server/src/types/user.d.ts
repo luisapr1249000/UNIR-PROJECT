@@ -1,12 +1,10 @@
+/* eslint-disable no-unused-vars */
 import { Document, PaginateModel, Types } from "mongoose";
-
 import {
-  addressDirectionSchema,
   userInputSchema,
   userSchemaComplete,
 } from "../validation-schemas/user.validation";
 import { z } from "zod";
-import { Product } from "./product";
 import { AddressDirection } from "./addressDirectionSchema";
 
 export type UserInput = z.infer<typeof userInputSchema>;

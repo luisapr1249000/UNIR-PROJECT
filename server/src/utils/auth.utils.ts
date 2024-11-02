@@ -48,15 +48,13 @@ export const genRefreshToken = (payload: UserJwt) => {
 };
 
 export const checkRefreshTokenAndGenAccessToken = (refreshToken: string) => {
-  const key = getKey();
-
-  try {
-    const { username, sub } = jwt.verify(refreshToken, key) as UserJwt;
-    const payload = { username, sub } as UserJwt;
-    return genAccessToken(payload);
-  } catch (_error) {
-    return null;
+  if (!refreshToken) {
+    throw new Error("Refresh token is required.");
   }
+  const key = getKey();
+  const { username, sub } = jwt.verify(refreshToken, key) as UserJwt;
+  const payload = { username, sub } as UserJwt;
+  return genAccessToken(payload);
 };
 
 export const extractAuthUserId = (req: Request): string => {

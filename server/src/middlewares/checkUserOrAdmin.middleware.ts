@@ -22,8 +22,8 @@ export const isUserOwnerOrAdmin = (
   const authUserRole = req.user?.role;
   const { userId } = req.params;
 
-  console.log(userId);
-  console.log(authUserId);
+  // console.log(userId);
+  // console.log(authUserId);
   if (authUserId === userId || authUserRole === "admin") {
     return next();
   }
@@ -60,20 +60,24 @@ export const verifyUserOwnershipOrAdminRole = (resource: string) => {
 
 const getResourceOwnerId = async (resource: string, resourceId: string) => {
   switch (resource) {
-    case "userId":
+    case "userId": {
       const user = await User.findById(resourceId);
       return user?._id.toString();
+    }
 
-    case "commentId":
+    case "commentId": {
       const comment = await Comment.findById(resourceId);
       return comment?.author;
+    }
 
-    case "productId":
+    case "productId": {
       const product = await Product.findById(resourceId);
       return product?.author;
+    }
 
-    case "orderId":
+    case "orderId": {
       const order = await Order.findById(resourceId);
       return order?.customId;
+    }
   }
 };
