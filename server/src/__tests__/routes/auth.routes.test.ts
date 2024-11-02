@@ -12,7 +12,7 @@ describe("Auth Routes", () => {
   const signupEndpoint = createEndpoint("auth", "signup");
   const loginEndpoint = createEndpoint("auth", "login");
   const refreshTokenEndpoint = createEndpoint("auth", "token/refresh");
-  const getAuthUserEndpoint = createEndpoint("auth", "user/me"); // Assuming the route is defined as /auth/user
+  const getAuthUserEndpoint = createEndpoint("auth", "user/me");
 
   let userCookies: string;
   beforeAll(async () => {
@@ -27,7 +27,7 @@ describe("Auth Routes", () => {
 
   describe(`POST ${signupEndpoint}`, () => {
     it("should sign up a new user successfully", async () => {
-      const { username, email, password } = createUserData(); // Generate user data
+      const { username, email, password } = createUserData();
 
       const response = await request(app)
         .post(signupEndpoint)
@@ -38,7 +38,7 @@ describe("Auth Routes", () => {
   });
 
   it("should return error if user already exists", async () => {
-    const existingUser = createUserFixture(); // Create a user fixture
+    const existingUser = createUserFixture();
 
     const response = await request(app).post(signupEndpoint).send(existingUser);
 
@@ -46,26 +46,26 @@ describe("Auth Routes", () => {
   });
 
   it("should return error on validation failure", async () => {
-    const response = await request(app).post(signupEndpoint).send({}); // Sending an empty request body
+    const response = await request(app).post(signupEndpoint).send({});
 
     expect(response.status).toBe(400);
   });
 
   describe(`POST ${loginEndpoint}`, () => {
     it("should log in a user successfully", async () => {
-      const { user, password } = await createUserFixture(); // Generate user data
+      const { user, password } = await createUserFixture();
 
       const response = await request(app)
-        .post(loginEndpoint) // First, sign up the user
+        .post(loginEndpoint)
         .send({ username: user.username, password });
       expect(response.status).toBe(200);
     });
 
     it("should log in a user successfully using email", async () => {
-      const { user, password } = await createUserFixture(); // Generate user data
+      const { user, password } = await createUserFixture();
 
       const response = await request(app)
-        .post(loginEndpoint) // First, sign up the user
+        .post(loginEndpoint)
         .send({ email: user.email, password });
       expect(response.status).toBe(200);
     });
@@ -80,79 +80,56 @@ describe("Auth Routes", () => {
     });
 
     it("should return error if password is incorrect", async () => {
-      const { user } = await createUserFixture(); // Generate user data
+      const { user } = await createUserFixture();
       const response = await request(app)
         .post(loginEndpoint)
-        .send({ loginValue: user.username, password: "wrongPassword" }); // Attempt to log in with incorrect password
+        .send({ loginValue: user.username, password: "wrongPassword" });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty("message", "Invalid credentials");
     });
-
-    // it("should return error on server error", async () => {
-    //   // Simulate a server error condition as needed.
-
-    //   const response = await request(app)
-    //     .post(loginEndpoint)
-    //     .send({ loginValue: "testUser", password: "testPass" });
-
-    //   expect(response.status).toBe(500);
-    //   expect(response.body).toHaveProperty("message", expect.anything()); // Ensure a message is returned
-    // });
   });
 
   describe(`GET ${refreshTokenEndpoint}`, () => {
     it("should refresh the access token successfully", async () => {
       const response = await request(app)
         .get(refreshTokenEndpoint)
-        .set("Cookie", userCookies); // Attach the refresh token cookie
+        .set("Cookie", userCookies);
 
       expect(response.status).toBe(200);
     });
 
     it("should return unauthorized if no refresh token is provided", async () => {
-      const response = await request(app).get(refreshTokenEndpoint); // No cookies provided
+      const response = await request(app).get(refreshTokenEndpoint);
 
       expect(response.status).toBe(401);
       expect(response.body).toHaveProperty("error", "Unauthorized");
     });
 
     it("should return forbidden if refresh token is invalid", async () => {
-      const invalidRefreshToken = "invalidRefreshToken"; // Simulate an invalid refresh token
+      const invalidRefreshToken = "invalidRefreshToken";
 
       const response = await request(app)
         .get(refreshTokenEndpoint)
-        .set("Cookie", [`refreshToken=${invalidRefreshToken}`]); // Attach invalid refresh token cookie
+        .set("Cookie", [`refreshToken=${invalidRefreshToken}`]);
 
       expect(response.status).toBe(403);
       expect(response.body).toHaveProperty("error", "Invalid refresh token");
     });
-
-    // it("should return error on server error", async () => {
-    //   // Simulate a server error condition as needed.
-
-    //   const response = await request(app)
-    //     .get(refreshTokenEndpoint)
-    //     .set("Cookie", ["refreshToken=validToken"]); // Use a valid token for testing
-
-    //   expect(response.status).toBe(500);
-    //   expect(response.body).toHaveProperty("message", expect.anything()); // Ensure a message is returned
-    // });
   });
   describe(`GET ${getAuthUserEndpoint}`, () => {
     it("should return the authenticated user data", async () => {
       const response = await request(app)
         .get(getAuthUserEndpoint)
-        .set("Cookie", userCookies); // Attach cookies from login
-
+        .set("Cookie", userCookies);
       expect(response.status).toBe(200);
     });
 
     it("should return 401 if user is not authenticated", async () => {
-      const response = await request(app).get(getAuthUserEndpoint); // No cookies provided
+      const response = await request(app).get(getAuthUserEndpoint);
 
-      expect(response.status).toBe(401); // Adjust based on your actual behavior
-      expect(response.body).toHaveProperty("error", "Unauthorized"); // Adjust based on your error handling
+      expect(response.status).toBe(401);
+      expect(response.body).toHaveProperty("error", "Unauthorized");
     });
   });
 });

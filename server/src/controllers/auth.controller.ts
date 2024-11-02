@@ -1,23 +1,19 @@
 import { Request, Response } from "express";
 import { User } from "../models/user.model";
 import {
-  loginSchema,
-  signupSchema,
-} from "../validation-schemas/auth.validation";
-import {
   checkRefreshTokenAndGenAccessToken,
   createPayload,
   genAccessToken,
   genRefreshToken,
   setTokenCookie,
 } from "../utils/auth.utils";
-import { getError } from "../utils/error.utils";
+import { handleError } from "../utils/error.utils";
 import { DEFAULT_COOKIES_DAY } from "../constants";
 
 class AuthController {
   public async signup(req: Request, res: Response) {
     try {
-      const { username, email, password } = signupSchema.parse(req.body);
+      const { username, email, password } = req.body;
       const existingUser = await User.findOne({
         $or: [{ username }, { email }],
       });
@@ -42,13 +38,12 @@ class AuthController {
       setTokenCookie(res, "accessToken", accessToken, null);
       return res.status(201).json({ userSaved, accessToken });
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
   public async login(req: Request, res: Response) {
     try {
-      const { rememberMe, loginValue, password } = loginSchema.parse(req.body);
+      const { rememberMe, loginValue, password } = req.body;
       const user = await User.findOne({
         $or: [{ email: loginValue }, { username: loginValue }],
       });
@@ -86,8 +81,7 @@ class AuthController {
 
       return res.status(200).json({ userId: user._id.toString() });
     } catch (e) {
-      const error = getError(e);
-      return res.status(500).json({ message: error });
+      return handleError(res, e);
     }
   }
 
@@ -104,11 +98,10 @@ class AuthController {
       setTokenCookie(res, "accessToken", newAccessToken);
       return res.status(200).json();
     } catch (e) {
-      const error = getError(e);
-      return res.status(500).json({ message: error });
+      return handleError(res, e);
     }
   }
-  public logout(req: Request, res: Response) {
+  public logout(_req: Request, res: Response) {
     res.cookie("accessToken", null, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

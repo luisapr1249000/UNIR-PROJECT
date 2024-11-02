@@ -1,7 +1,18 @@
-import { Types } from "mongoose";
 import { z } from "zod";
-import { abstractSchema } from "./abstract.validation";
-import { orderItemSchema } from "./orderItem.validation";
+import {
+  abstractSchema,
+  mongooseObjectId,
+  productObjIdSchema,
+} from "./abstract.validation";
+
+export const orderItemInputSchema = z.object({
+  quantity: z.coerce.number(),
+  price: z.coerce.number(),
+});
+
+export const orderItemSchema = abstractSchema
+  .merge(orderItemInputSchema)
+  .merge(productObjIdSchema);
 
 export const orderInputSchema = z.object({
   totalPrice: z.coerce.number(),
@@ -9,7 +20,7 @@ export const orderInputSchema = z.object({
 });
 
 export const orderSchema = z.object({
-  customId: z.instanceof(Types.ObjectId),
+  customId: mongooseObjectId,
   status: z
     .enum(["pending", "processing", "shipped", "delivered"])
     .default("pending"),

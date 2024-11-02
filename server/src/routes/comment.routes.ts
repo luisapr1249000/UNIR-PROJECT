@@ -1,9 +1,16 @@
 import { Router } from "express";
-import authMiddleware from "../middlewares/authMiddleware";
+import authMiddleware from "../middlewares/auth.middleware";
 import commentController from "../controllers/comment.controller";
-import { checkValiObjectdId } from "../middlewares/checkObjectId";
-import { checkUserOrAdmin } from "../middlewares/checkUserOrAdmin";
-import { isAdmin } from "../middlewares/isAdmin";
+import {
+  isAdmin,
+  verifyUserOwnershipOrAdminRole,
+} from "../middlewares/checkUserOrAdmin.middleware";
+import { commentInputSchema } from "../validation-schemas/comment.validation";
+import {
+  validateObjectIdParams,
+  validateSchemaBody,
+  validPagination,
+} from "../middlewares/requestValidation.middleware";
 
 const router = Router();
 
@@ -11,46 +18,51 @@ router.get(
   "/comments/",
   authMiddleware,
   isAdmin,
+  validPagination,
   commentController.getAllComments,
 );
 router.get(
   "/comments/user/:userId",
   isAdmin,
-  checkValiObjectdId,
+  validPagination,
+  validateObjectIdParams(["userId"]),
+
   commentController.getUserComments,
 );
 
 router.get(
-  "/products/:postId/comments/",
-  checkValiObjectdId,
+  "/products/:productId/comments/",
+  validPagination,
+  validateObjectIdParams(["productId"]),
   commentController.getCommentsFromProduct,
 );
 router.get(
-  "/products/:postId/comments/:commentId",
-  checkValiObjectdId,
+  "/products/:productId/comments/:commentId",
+  validateObjectIdParams(["productId", "commentId"]),
   commentController.getCommentById,
 );
 
 router.post(
-  "/products/:postId/comments/:commentId",
+  "/products/:productId/comments/:commentId",
   authMiddleware,
-  checkValiObjectdId,
-  checkUserOrAdmin,
+  validateObjectIdParams(["productId", "commentId"]),
+  validateSchemaBody(commentInputSchema),
   commentController.createComment,
 );
 router.put(
-  "/products/:postId/comments/:commentId",
+  "/products/:productId/comments/:commentId",
   authMiddleware,
-  checkValiObjectdId,
-  checkUserOrAdmin,
+  verifyUserOwnershipOrAdminRole("commentId"),
+  validateObjectIdParams(["productId", "commentId"]),
+  validateSchemaBody(commentInputSchema),
   commentController.updateComment,
 );
 
 router.delete(
-  "/products/:postId/comments/:commentId",
+  "/products/:productId/comments/:commentId",
   authMiddleware,
-  checkValiObjectdId,
-  checkUserOrAdmin,
+  verifyUserOwnershipOrAdminRole("commentId"),
+  validateObjectIdParams(["productId", "commentId"]),
   commentController.deleteComment,
 );
 

@@ -1,7 +1,25 @@
 import { PaginateModel, Schema, model } from "mongoose";
-import { orderItemSchema } from "./orderItem.model";
 import mongoosePaginate from "mongoose-paginate-v2";
 import { OrderDocument } from "../types/order";
+
+const orderItemSchema = new Schema(
+  {
+    product: {
+      type: Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+  },
+  { timestamps: true },
+);
 
 const orderSchema = new Schema(
   {

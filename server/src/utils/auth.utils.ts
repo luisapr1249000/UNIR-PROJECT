@@ -40,7 +40,7 @@ export const getKey = () => {
 };
 
 export const genAccessToken = (payload: UserJwt) => {
-  return jwt.sign(payload, getKey(), { expiresIn: "15m" });
+  return jwt.sign(payload, getKey(), { expiresIn: "1s" });
 };
 
 export const genRefreshToken = (payload: UserJwt) => {

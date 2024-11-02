@@ -93,7 +93,7 @@ describe("Category Routes", () => {
     });
 
     it("should return 400 if the category input is invalid", async () => {
-      const invalidCategory = { invalidField: "Invalid Data" }; // This should not conform to your schema
+      const invalidCategory = { invalidField: "Invalid Data" };
 
       const response = await request(app)
         .post(categoryEndpoint)
@@ -170,10 +170,10 @@ describe("Category Routes", () => {
         .set("Cookie", user2Cookies)
         .send(updatedData);
 
-      expect(response.status).toBe(403); // Assuming you handle permissions this way
+      expect(response.status).toBe(403);
       expect(response.body.message).toBe(
         "Forbidden: You do not have permission to update this category.",
-      ); // Adjust message accordingly
+      );
     });
   });
 

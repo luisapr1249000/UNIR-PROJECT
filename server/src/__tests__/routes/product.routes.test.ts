@@ -24,7 +24,6 @@ describe("Product Routes", () => {
   let adminCookies = "";
   let productData = {};
 
-  //   NON VALID OR EXISTED PRODUCTS
   const nonValidProductIdEndpoint = createEndpoint(
     "products",
     NON_VALID_OBJECT_ID,

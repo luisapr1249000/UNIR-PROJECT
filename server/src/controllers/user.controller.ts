@@ -1,55 +1,44 @@
 import { User } from "../models/user.model";
 import { Request, Response } from "express";
 import { extractAuthUserId } from "../utils/auth.utils";
-import { getError, handleObjectNotFound } from "../utils/error.utils";
-import {
-  paginationNoPopulateSchema,
-  productIdParamSchema,
-  userIdParamSchema,
-  usernameParamSchema,
-} from "../validation-schemas/query.validation";
-import { userInputSchema } from "../validation-schemas/user.validation";
+import { handleError, handleObjectNotFound } from "../utils/error.utils";
 
 class UserController {
   public async updateUser(req: Request, res: Response) {
     try {
       const authUserId = extractAuthUserId(req);
-      userInputSchema.parse(req.body);
       const userUpdated = await User.findByIdAndUpdate(authUserId, req.body, {
         new: true,
       });
-
       if (!userUpdated) {
         return handleObjectNotFound(res, "User");
       }
       return res.status(200).json(userUpdated);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async getUserById(req: Request, res: Response) {
     try {
-      const { userId } = userIdParamSchema.parse(req.params);
+      const { userId } = req.params;
+
       const user = await User.findById(userId).select("-addressDirections");
       if (!user) {
         return handleObjectNotFound(res, "User");
       }
       return res.status(200).json(user);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async getUsersWithPagination(req: Request, res: Response) {
     try {
-      const { limit, page, sort } = paginationNoPopulateSchema.parse(req.query);
-
       const users = await User.paginate(
         {},
-        { limit, page, sort, select: ["-addressDirections"] },
+        { ...req.query, select: ["-addressDirections"] },
+        // { limit, page, sort, select: ["-addressDirections"] },
       );
       const { docs } = users;
       if (docs.length <= 0) {
@@ -57,13 +46,12 @@ class UserController {
       }
       return res.status(200).json(users);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async getUserByUsername(req: Request, res: Response) {
-    const { username } = usernameParamSchema.parse(req.params);
+    const { username } = req.params;
     try {
       const user = await User.findOne({ username: username });
       if (!user) {
@@ -71,14 +59,13 @@ class UserController {
       }
       return res.status(200).json(user);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async deleteUser(req: Request, res: Response) {
     try {
-      const { userId } = userIdParamSchema.parse(req.params);
+      const { userId } = req.params;
       const userDeleted = await User.findByIdAndDelete(userId);
       if (!userDeleted) {
         return handleObjectNotFound(res, "User");
@@ -86,42 +73,42 @@ class UserController {
 
       return res.status(204).send();
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async getUserCart(req: Request, res: Response) {
     try {
-      const { userId } = userIdParamSchema.parse(req.params);
+      const { userId } = req.params;
+
       const user = await User.findById(userId).select("cart").populate("cart");
       if (!user) {
         return handleObjectNotFound(res, "User");
       }
       return res.status(200).json(user);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async getUseSavedProducts(req: Request, res: Response) {
     try {
-      const { userId } = userIdParamSchema.parse(req.params);
+      const { userId } = req.params;
+
       const user = await User.findById(userId).select("savedProducts");
       if (!user) {
         return handleObjectNotFound(res, "User");
       }
       return res.status(200).json(user);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async getUseWishlist(req: Request, res: Response) {
     try {
-      const { userId } = userIdParamSchema.parse(req.params);
+      const { userId } = req.params;
+
       const user = await User.findById(userId)
         .select("wishlist")
         .populate("wishlist");
@@ -130,15 +117,15 @@ class UserController {
       }
       return res.status(200).json(user);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async addProductToCart(req: Request, res: Response) {
-    const { userId } = userIdParamSchema.parse(req.params);
-    const { productId } = productIdParamSchema.parse(req.params);
     try {
+      const { userId } = req.params;
+
+      const { productId } = req.params;
       const user = await User.findById(userId);
       if (!user) {
         return handleObjectNotFound(res, "User");
@@ -149,15 +136,15 @@ class UserController {
 
       return res.status(200).json(user);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async removeProductFromCart(req: Request, res: Response) {
-    const { userId } = userIdParamSchema.parse(req.params);
-    const { productId } = productIdParamSchema.parse(req.params);
     try {
+      const { userId } = req.params;
+
+      const { productId } = req.params;
       const user = await User.findById(userId);
       if (!user) {
         return handleObjectNotFound(res, "User");
@@ -168,15 +155,15 @@ class UserController {
 
       return res.status(204);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async addProductToWishlist(req: Request, res: Response) {
-    const { userId } = userIdParamSchema.parse(req.params);
-    const { productId } = productIdParamSchema.parse(req.params);
     try {
+      const { userId } = req.params;
+
+      const { productId } = req.params;
       const user = await User.findById(userId);
       if (!user) {
         return handleObjectNotFound(res, "User");
@@ -187,15 +174,15 @@ class UserController {
 
       return res.status(200).json(user);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async removeProductFromWishlist(req: Request, res: Response) {
-    const { userId } = userIdParamSchema.parse(req.params);
-    const { productId } = productIdParamSchema.parse(req.params);
     try {
+      const { userId } = req.params;
+
+      const { productId } = req.params;
       const user = await User.findById(userId);
       if (!user) {
         return handleObjectNotFound(res, "User");
@@ -206,15 +193,14 @@ class UserController {
 
       return res.status(204);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async addProductToSavedProducts(req: Request, res: Response) {
-    const { userId } = userIdParamSchema.parse(req.params);
-    const { productId } = productIdParamSchema.parse(req.params);
     try {
+      const { userId } = req.params;
+      const { productId } = req.params;
       const user = await User.findById(userId);
       if (!user) {
         return handleObjectNotFound(res, "User");
@@ -225,15 +211,15 @@ class UserController {
 
       return res.status(200).json(user);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async removeProductFromSavedProducts(req: Request, res: Response) {
-    const { userId } = userIdParamSchema.parse(req.params);
-    const { productId } = productIdParamSchema.parse(req.params);
     try {
+      const { userId } = req.params;
+
+      const { productId } = req.params;
       const user = await User.findById(userId);
       if (!user) {
         return handleObjectNotFound(res, "User");
@@ -244,8 +230,7 @@ class UserController {
 
       return res.status(204);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 }

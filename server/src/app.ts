@@ -6,11 +6,12 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import { AuthRoutes } from "./routes/auth.routes";
 import { UserRoutes } from "./routes/user.routes";
-import { AddressDirectionRoutes } from "./routes/addressDirecttion.routes";
+import { AddressDirectionRoutes } from "./routes/addressDirection.routes";
 import { CategoryRoutes } from "./routes/category.routes";
 import { ProductRoutes } from "./routes/product.routes";
 import { CommentRoutes } from "./routes/comment.routes";
 import { passportJwt } from "./auth/passport/passport.jwt";
+import { OrderRoutes } from "./routes/order.routes";
 
 const app: Application = express();
 
@@ -34,6 +35,7 @@ app.use("/api/v1", AddressDirectionRoutes);
 app.use("/api/v1", CategoryRoutes);
 app.use("/api/v1", ProductRoutes);
 app.use("/api/v1", CommentRoutes);
+app.use("/api/v1", OrderRoutes);
 
 app.get("/api/v1/health", (_req, res) => {
   res.status(200).json({ status: "OK" });

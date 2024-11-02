@@ -2,7 +2,54 @@ import bcrypt from "bcrypt";
 import { PaginateModel, Schema, model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 import { UserDocument } from "../types/user";
-import { addressDirectionSchema } from "./addressDirection.model";
+
+const addressDirectionSchema = new Schema(
+  {
+    pinCode: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    locality: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 10,
+      maxlength: 100,
+    },
+    addressLine1: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 10,
+      maxlength: 100,
+    },
+    addressLine2: {
+      type: String,
+      trim: true,
+      maxlength: 100,
+    },
+    cityDistrictTown: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    state: {
+      type: String,
+      required: true,
+    },
+    alternatePhone: {
+      type: String,
+      trim: true,
+    },
+    addressType: {
+      type: String,
+      required: true,
+      enum: ["home", "work"],
+    },
+  },
+  { timestamps: true },
+);
 
 export const imageSchema = new Schema({
   originalName: String,

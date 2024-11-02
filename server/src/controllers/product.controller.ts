@@ -1,36 +1,25 @@
 import { Request, Response } from "express";
 import { extractAuthUserId } from "../utils/auth.utils";
-import { getError, handleObjectNotFound } from "../utils/error.utils";
-import { productInputSchema } from "../validation-schemas/product.validation";
+import { handleError, handleObjectNotFound } from "../utils/error.utils";
 import { Product } from "../models/product.model";
-import {
-  categoryIdParamSchema,
-  paginationNoPopulateSchema,
-  productIdParamSchema,
-  userIdParamSchema,
-} from "../validation-schemas/query.validation";
 
 class ProductController {
   public async createProduct(req: Request, res: Response) {
     try {
       const authUserId = extractAuthUserId(req);
-      productInputSchema.parse(req.body);
       const product = new Product({ ...req.body, author: authUserId });
       await product.save();
       return res.status(201).json(product);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async updateProduct(req: Request, res: Response) {
     try {
-      const { productId } = productIdParamSchema.parse(req.params);
-      const authUserId = extractAuthUserId(req);
-      productInputSchema.parse(req.body);
-      const product = await Product.findOneAndUpdate(
-        { _id: productId, author: authUserId },
+      const { productId } = req.params;
+      const product = await Product.findByIdAndUpdate(
+        productId,
         {
           ...req.body,
         },
@@ -41,42 +30,28 @@ class ProductController {
       }
       return res.status(200).json(product);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async deleteProduct(req: Request, res: Response) {
     try {
-      const { productId } = productIdParamSchema.parse(req.query);
-      const authUserId = extractAuthUserId(req);
-      productInputSchema.parse(req.body);
-      const product = await Product.findOneAndDelete(
-        { _id: productId, author: authUserId },
-        {
-          ...req.body,
-        },
-      );
+      const { productId } = req.params;
+      const product = await Product.findByIdAndDelete(productId);
       if (!product) {
         return handleObjectNotFound(res, "Product");
       }
       return res.status(204).json(product);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async getProductsWithPagination(req: Request, res: Response) {
     try {
-      const {
-        limit,
-        sort = "-createdAt",
-        page,
-      } = paginationNoPopulateSchema.parse(req.query);
       const products = await Product.paginate(
         {},
-        { limit, sort, page, populate: ["author", "categories"] },
+        { ...req.query, populate: ["author", "categories"] },
       );
       if (products.docs.length === 0) {
         return handleObjectNotFound(res, "Product", true);
@@ -84,14 +59,13 @@ class ProductController {
 
       return res.status(200).json(products);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async getProductById(req: Request, res: Response) {
     try {
-      const { productId } = productIdParamSchema.parse(req.params);
+      const { productId } = req.params;
       const product = await Product.findById(productId)
         .populate("author")
         .populate("categories");
@@ -101,22 +75,18 @@ class ProductController {
 
       return res.status(200).json(product);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
   public async getProductsByAuthorWithPagination(req: Request, res: Response) {
     try {
-      const { limit, sort, page } = paginationNoPopulateSchema.parse(req.query);
-      const { userId } = userIdParamSchema.parse(req.params);
+      const { userId } = req.params;
       const query = {
         author: userId,
       };
       const products = await Product.paginate(query, {
-        limit,
-        sort,
-        page,
+        ...req.query,
         populate: ["author", "categories"],
       });
       if (products.docs.length === 0) {
@@ -125,8 +95,7 @@ class ProductController {
 
       return res.status(200).json(products);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
   public async getProductsByCategoryWithPagination(
@@ -134,15 +103,12 @@ class ProductController {
     res: Response,
   ) {
     try {
-      const { limit, sort, page } = paginationNoPopulateSchema.parse(req.query);
-      const { categoryId } = categoryIdParamSchema.parse(req.params);
+      const { categoryId } = req.params;
       const query = {
         categories: categoryId,
       };
       const products = await Product.paginate(query, {
-        limit,
-        sort,
-        page,
+        ...req.query,
         populate: ["author"],
       });
       if (products.docs.length === 0) {
@@ -151,8 +117,7 @@ class ProductController {
 
       return res.status(200).json(products);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 }

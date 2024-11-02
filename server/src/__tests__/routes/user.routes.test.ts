@@ -132,7 +132,6 @@ describe("User Routes", () => {
 
       expect(response.status).toBe(200);
 
-      // Ensure restricted fields are excluded
       expect(response.body).not.toHaveProperty("cart");
       expect(response.body).not.toHaveProperty("savedProducts");
       expect(response.body).not.toHaveProperty("wishlist");
@@ -163,8 +162,7 @@ describe("User Routes", () => {
     });
 
     it("should return 404 if user does not exist", async () => {
-      const nonExistentUsername = "nonExistentUser123"; // Assume this username does not exist
-
+      const nonExistentUsername = "nonExistentUser123";
       const response = await request(app).get(nonExistentUsername);
 
       expect(response.status).toBe(404);
@@ -183,8 +181,7 @@ describe("User Routes", () => {
     });
 
     it("should return 404 if no users found on page", async () => {
-      const response = await request(app).get(userEndpointQuery(1)); // Assume page 10 is out of range
-
+      const response = await request(app).get(userEndpointQuery(1));
       expect(response.status).toBe(404);
     });
 

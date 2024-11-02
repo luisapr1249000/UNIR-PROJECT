@@ -1,39 +1,56 @@
 import { Router } from "express";
 import productController from "../controllers/product.controller";
-import authMiddleware from "../middlewares/authMiddleware";
-import { checkValiObjectdId } from "../middlewares/checkObjectId";
-import { checkUserOrAdmin } from "../middlewares/checkUserOrAdmin";
+import authMiddleware from "../middlewares/auth.middleware";
+import { verifyUserOwnershipOrAdminRole } from "../middlewares/checkUserOrAdmin.middleware";
+import {
+  validateObjectIdParams,
+  validateSchemaBody,
+  validPagination,
+} from "../middlewares/requestValidation.middleware";
+import { productInputSchema } from "../validation-schemas/product.validation";
 
 const router = Router();
 
 router.get(
   "/products",
-  authMiddleware,
+  validPagination,
   productController.getProductsWithPagination,
 );
-router.post("/products", authMiddleware, productController.createProduct);
+router.post(
+  "/products",
+  authMiddleware,
+  validateSchemaBody(productInputSchema),
+  productController.createProduct,
+);
 router.put(
   "/products/:productId",
   authMiddleware,
-  checkValiObjectdId,
-  checkUserOrAdmin,
+  validateObjectIdParams(["productId"]),
+  validateSchemaBody(productInputSchema),
   productController.updateProduct,
 );
 router.delete(
   "/products/:productId",
   authMiddleware,
-  checkValiObjectdId,
-  checkUserOrAdmin,
+  validateObjectIdParams(["productId"]),
+  verifyUserOwnershipOrAdminRole("productId"),
   productController.deleteProduct,
 );
 router.get(
   "/products/author/:userId",
-  checkValiObjectdId,
+  validPagination,
+  validateObjectIdParams(["userId"]),
   productController.getProductsByAuthorWithPagination,
 );
-router.get("/products/:productId", productController.getProductById);
+router.get(
+  "/products/:productId",
+  validateObjectIdParams(["productId"]),
+  productController.getProductById,
+);
 router.get(
   "/products/category/:categoryId",
+  validPagination,
+  validateObjectIdParams(["categoryId"]),
   productController.getProductsByCategoryWithPagination,
 );
 

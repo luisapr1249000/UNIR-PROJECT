@@ -1,88 +1,108 @@
 import { Router } from "express";
 import userController from "../controllers/user.controller";
-import authMiddleware from "../middlewares/authMiddleware";
-import { checkValiObjectdId } from "../middlewares/checkObjectId";
-import { checkUserOrAdmin } from "../middlewares/checkUserOrAdmin";
+import authMiddleware from "../middlewares/auth.middleware";
+import {
+  verifyUserOwnershipOrAdminRole,
+  isUserOwnerOrAdmin,
+} from "../middlewares/checkUserOrAdmin.middleware";
+import {
+  validateObjectIdParams,
+  validateSchemaBody,
+  validPagination,
+  validUsername,
+} from "../middlewares/requestValidation.middleware";
+import { userInputSchema } from "../validation-schemas/user.validation";
 
 const router = Router();
 
-router.get("/users/", userController.getUsersWithPagination);
-router.put("/users/", authMiddleware, userController.updateUser);
+router.get("/users/", validPagination, userController.getUsersWithPagination);
+router.put(
+  "/users/",
+  authMiddleware,
+  validateSchemaBody(userInputSchema),
+  userController.updateUser,
+);
 router.delete(
   "/users/:userId",
   authMiddleware,
-  checkValiObjectdId,
-  checkUserOrAdmin,
+  validateObjectIdParams(["userId"]),
+  verifyUserOwnershipOrAdminRole("userId"),
   userController.deleteUser,
 );
-router.get("/users/:userId", userController.getUserById);
-router.get("/users/:username", userController.getUserByUsername);
+router.get(
+  "/users/:userId",
+  validateObjectIdParams(["userId"]),
+  userController.getUserById,
+);
+router.get("/users/:username", validUsername, userController.getUserByUsername);
 
 // -------------------------------- cart ------------------
 router.get(
   "/users/:userId/cart",
-  checkValiObjectdId,
-  checkUserOrAdmin,
+  authMiddleware,
+  validateObjectIdParams(["userId"]),
+  isUserOwnerOrAdmin,
   userController.getUserCart,
 );
 router.post(
   "/users/:userId/cart/:productId",
   authMiddleware,
-
-  checkValiObjectdId,
-  checkUserOrAdmin,
+  validateObjectIdParams(["userId", "productId"]),
+  isUserOwnerOrAdmin,
   userController.addProductToCart,
 );
 router.delete(
   "/users/:userId/cart/:productId",
   authMiddleware,
-
-  checkValiObjectdId,
-  checkUserOrAdmin,
+  validateObjectIdParams(["userId", "productId"]),
+  isUserOwnerOrAdmin,
   userController.removeProductFromCart,
 );
 // -------------------------------- cart ------------------
 // -------------------------------- saved products ------------------
 router.get(
-  "/users/:userId/products-saved",
-  checkValiObjectdId,
-  checkUserOrAdmin,
+  "/users/:userId/saved-products",
+  authMiddleware,
+  validateObjectIdParams(["userId"]),
+  isUserOwnerOrAdmin,
   userController.getUseSavedProducts,
 );
 router.post(
-  "/users/:userId/products-saved/:productId",
+  "/users/:userId/saved-products/:productId",
   authMiddleware,
-
-  checkValiObjectdId,
-  checkUserOrAdmin,
+  validateObjectIdParams(["userId", "productId"]),
+  isUserOwnerOrAdmin,
   userController.addProductToSavedProducts,
 );
 router.delete(
-  "/users/:userId/products-saved/:productId",
+  "/users/:userId/saved-products/:productId",
   authMiddleware,
-  checkValiObjectdId,
-  checkUserOrAdmin,
-
+  validateObjectIdParams(["userId", "productId"]),
+  isUserOwnerOrAdmin,
   userController.removeProductFromSavedProducts,
 );
 // -------------------------------- saved products ------------------
-
 // -------------------------------- wishlist ------------------
 router.get(
   "/users/:userId/wishlist",
-  checkValiObjectdId,
+  authMiddleware,
+  validateObjectIdParams(["userId"]),
+  isUserOwnerOrAdmin,
   userController.getUseWishlist,
 );
 router.post(
   "/users/:userId/wishlist/:productId",
   authMiddleware,
-  checkValiObjectdId,
+  validateObjectIdParams(["userId", "productId"]),
+  isUserOwnerOrAdmin,
   userController.addProductToWishlist,
 );
 router.delete(
   "/users/:userId/wishlist/:productId",
   authMiddleware,
-  checkValiObjectdId,
+
+  validateObjectIdParams(["userId", "productId"]),
+  isUserOwnerOrAdmin,
   userController.removeProductFromWishlist,
 );
 // -------------------------------- wishlist ------------------

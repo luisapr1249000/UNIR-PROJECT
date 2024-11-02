@@ -1,38 +1,32 @@
 import { Router } from "express";
 import addressDirectionController from "../controllers/addressDirection.controller";
-import authMiddleware from "../middlewares/authMiddleware";
-import { checkValiObjectdId } from "../middlewares/checkObjectId";
-import { checkUserOrAdmin } from "../middlewares/checkUserOrAdmin";
+import authMiddleware from "../middlewares/auth.middleware";
+import {
+  validateObjectIdParams,
+  validateSchemaBody,
+} from "../middlewares/requestValidation.middleware";
+import { addressDirectionInputSchema } from "../validation-schemas/user.validation";
 
 const router = Router();
 
 router.post(
   "/users/address-direction",
   authMiddleware,
+  validateSchemaBody(addressDirectionInputSchema),
   addressDirectionController.createAddressDirection,
 );
 router.put(
   "/users/address-direction/:addressDirectionId",
   authMiddleware,
-  checkUserOrAdmin,
+  validateObjectIdParams(["addressDirectionId"]),
+  validateSchemaBody(addressDirectionInputSchema),
   addressDirectionController.updateAddressDirection,
 );
 router.delete(
   "/users/address-direction/:addressDirectionId",
   authMiddleware,
-  checkUserOrAdmin,
+  validateObjectIdParams(["addressDirectionId"]),
   addressDirectionController.deleteAddressDirection,
 );
-
-// router.get(
-//   "/users/:userId/address-directions",
-//   checkValiObjectdId,
-//   addressDirectionController.getUserAddressDirections,
-// );
-// router.get(
-//   "/users/address-directions/:addressDirectionId",
-//   checkValiObjectdId,
-//   addressDirectionController.getAddressDirectionById,
-// );
 
 export { router as AddressDirectionRoutes };

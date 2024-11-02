@@ -1,21 +1,12 @@
 import { Request, Response } from "express";
-
-import { getError, handleObjectNotFound } from "../utils/error.utils";
+import { handleError, handleObjectNotFound } from "../utils/error.utils";
 import { extractAuthUserId } from "../utils/auth.utils";
 import { User } from "../models/user.model";
-import { AddressDirection } from "../models/addressDirection.model";
-import {
-  addressDirectionIdParamSchema,
-  userIdParamSchema,
-} from "../validation-schemas/query.validation";
-import { addressDirectionInputSchema } from "../validation-schemas/addressDirection.validation";
 
 class AddressDirectionController {
   public async createAddressDirection(req: Request, res: Response) {
     try {
-      addressDirectionInputSchema.parse(req.body);
       const authUserId = extractAuthUserId(req);
-
       const user = await User.findById(authUserId);
       if (!user) {
         return handleObjectNotFound(res, "User");
@@ -25,16 +16,12 @@ class AddressDirectionController {
       await user.save();
       return res.status(201).json(user);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
   public async updateAddressDirection(req: Request, res: Response) {
     try {
-      const { addressDirectionId } = addressDirectionIdParamSchema.parse(
-        req.params,
-      );
-      addressDirectionInputSchema.parse(req.body);
+      const { addressDirectionId } = req.params;
       const authUserId = extractAuthUserId(req);
 
       const addressDirectionUpdated = await User.findOneAndUpdate(
@@ -48,8 +35,7 @@ class AddressDirectionController {
 
       return res.status(200).json(addressDirectionUpdated);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
   public async deleteAddressDirection(req: Request, res: Response) {
@@ -66,8 +52,7 @@ class AddressDirectionController {
       await user.save();
       return res.status(204).json(user);
     } catch (e) {
-      const { status, error } = getError(e);
-      return res.status(status).json(error);
+      return handleError(res, e);
     }
   }
 
